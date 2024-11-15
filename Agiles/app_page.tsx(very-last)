@@ -1,0 +1,123 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
+import { FacebookIcon, InstagramIcon, Menu, ArrowLeft } from 'lucide-react'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Label } from "@/components/ui/label"
+
+export default function Component() {
+  const [events, setEvents] = useState([])
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '' })
+  const [currentView, setCurrentView] = useState('main')
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [registrationForm, setRegistrationForm] = useState({ name: '', email: '' })
+
+  const handleCreateEvent = () => {
+    setEvents([...events, { ...newEvent, id: Date.now() }])
+    setNewEvent({ title: '', description: '', date: '' })
+  }
+
+  const handleParticipate = (event) => {
+    setSelectedEvent(event)
+    setCurrentView('registration')
+  }
+
+  const handleRegistration = (e) => {
+    e.preventDefault()
+    console.log('Registration submitted:', { event: selectedEvent, user: registrationForm })
+    setRegistrationForm({ name: '', email: '' })
+    setCurrentView('main')
+  }
+
+  const MainView = () => (
+    <>
+      <Card className="mb-8 bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle>Create New Event</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              placeholder="Event Title"
+              value={newEvent.title}
+              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+            />
+            <Input
+              placeholder="Event Description"
+              value={newEvent.description}
+              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+            />
+            <Input
+              type="date"
+              value={newEvent.date}
+              onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+            />
+            <Button onClick={handleCreateEvent} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded">
+              Create Event
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <Card key={event.id} className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="text-purple-700">{event.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">{event.description}</p>
+              <p className="text-sm text-gray-500 mt-2">Date: {event.date}</p>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={() => handleParticipate(event)} className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded">
+                Participer à l'événement
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    </>
+  )
+
+  const RegistrationView = () => (
+    <Card className="bg-white/80 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <Button variant="ghost" onClick={() => setCurrentView('main')} className="mr-2">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          Inscription à l'événement: {selectedEvent.title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleRegistration} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Nom</Label>
+            <Input
+              id="name"
+              placeholder="Votre nom"
+              value={registrationForm.name}
+              onChange={(e) => setRegistrationForm({ ...registrationForm, name: e.target.value })}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Votre email"
+              value={registrationForm.email}
+              onChange={(e) => setRegistrationForm({ ...registrationForm, email: e.target.value })}
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white 

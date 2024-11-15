@@ -1,0 +1,62 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+
+export default function Component() {
+  const [events, setEvents] = useState([])
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '' })
+
+  const handleCreateEvent = () => {
+    setEvents([...events, { ...newEvent, id: Date.now() }])
+    setNewEvent({ title: '', description: '', date: '' })
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Event Management Platform</h1>
+      
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Create New Event</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Input
+              placeholder="Event Title"
+              value={newEvent.title}
+              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+            />
+            <Input
+              placeholder="Event Description"
+              value={newEvent.description}
+              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+            />
+            <Input
+              type="date"
+              value={newEvent.date}
+              onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+            />
+            <Button onClick={handleCreateEvent}>Create Event</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {events.map((event) => (
+          <Card key={event.id}>
+            <CardHeader>
+              <CardTitle>{event.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{event.description}</p>
+              <p className="text-sm text-gray-500 mt-2">Date: {event.date}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
